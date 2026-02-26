@@ -13,17 +13,26 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch("data/datos.json")
     .then(res => res.json())
     .then(data => {
-      configurarBIM(data.info.bim);
-      PDF_INFO = data.infoAdicional?.pdf;
+
+      configurarBIM(data.info?.bim);
+      PDF_INFO = data.info?.cantidades;
+
       if (PDF_INFO) {
-        renderPDFPreview(`info/${PDF_INFO}`, "pdfPreviewInfo");
+
+        const archivo = `${PDF_INFO}.pdf`;
+
+        renderPDFPreview(`info/${archivo}`, "pdfPreviewInfo");
+
+        const btn = document.getElementById("btnVerInforme");
+
+        if (btn) {
+          btn.addEventListener("click", () => {
+            verPDFInfo(archivo);
+          });
+        }
+
       }
-      const btn = document.getElementById("btnVerInforme");
-      if (btn && PDF_INFO) {
-        btn.addEventListener("click", () => {
-          verPDFInfo(PDF_INFO);
-        });
-      }
+
     })
     .catch(err => console.error("Error cargando datos:", err));
 });
