@@ -127,9 +127,6 @@ elementos = [...elementosOriginales];
       renderGraficaResistenciaPorPiso(DATA[tipo]);
     }
 
-    const selectPiso = document.getElementById("selectPiso");
-    const bloquePiso = document.getElementById("bloquePiso");
-
   });
 
 /* =======================
@@ -401,7 +398,6 @@ function seleccionarElemento(el) {
     );
   }
 
-actualizarKPIs(registros, piso);
 
   if (tipo === "vigas") {
   const aceroPiso = obtenerAceroTotalVigasPorPiso(el.piso);

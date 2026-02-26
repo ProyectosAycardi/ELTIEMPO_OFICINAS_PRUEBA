@@ -87,7 +87,7 @@ fetch("data/datos.json")
     cargarLista(elementos);
 
     if (tipo === "columnas" || tipo === "muros") {
-      selectElemento.value = "TODAS";
+      selectElemento.value = "TODOS";
       mostrarResumenCapitulo();
     }
 
@@ -119,10 +119,11 @@ fetch("data/datos.json")
 buscador.addEventListener("input", e => {
   const txt = e.target.value.toLowerCase();
 
-  const filtrados = elementos.filter(el =>
+  const filtrados = DATA[tipo].filter(el =>
     JSON.stringify(el).toLowerCase().includes(txt)
   );
-  elementos = filtrados
+
+  elementos = filtrados;
   cargarLista();
 
 });
@@ -136,7 +137,7 @@ const selectElemento = document.getElementById("selectElemento");
 selectElemento.addEventListener("change", e => {
   const index = e.target.value;
 
-  if (e.target.value === "TODAS") {
+  if (e.target.value === "TODOS") {
     mostrarResumenCapitulo();
     return;
   }
@@ -182,7 +183,7 @@ function cargarLista() {
   // ===== AGREGAR TODAS (solo columnas y muros) =====
   if (tipo === "columnas" || tipo === "muros") {
     selectElemento.innerHTML +=
-      `<option value="TODAS">Todas</option>`;
+      `<option value="TODOS">Todos</option>`;
   }
 
   // ===== AGREGAR ELEMENTOS =====
@@ -332,7 +333,7 @@ function seleccionarElemento(el) {
     );
   }
 
-actualizarKPIs(registros, piso);
+
 
   if (tipo === "vigas") {
   const aceroPiso = obtenerAceroTotalVigasPorPiso(el.piso);
@@ -633,8 +634,7 @@ function renderGrafica() {
 
 function renderGraficaResistenciaPorPiso(vigas) {
 
-  // 1. Eliminar la primera fila (encabezados)
-  const datos = vigas.slice(1).filter(v =>
+  const datos = vigas.filter(v =>
     v.piso && !isNaN(Number(v.resistencia))
   );
 
@@ -754,7 +754,7 @@ function mostrarResumenCapitulo() {
   const cantidad = DATA[tipo].length;
 
   detalle.innerHTML = `
-    <h3>TODAS LAS ${tipo.toUpperCase()}</h3>
+    <h3>TODOS LAS ${tipo.toUpperCase()}</h3>
 
     <div class="card-detalle">
 
