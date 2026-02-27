@@ -8,10 +8,12 @@ let PLANOS = [];
 fetch("data/datos.json")
   .then(res => res.json())
   .then(data => {
-    document.getElementById("tituloProyecto").textContent =
-      data.info.proyecto;
+
+    document.getElementById("tituloProyecto").textContent = data.info.proyecto;
 
     PLANOS = data.planos;
+
+    configurarLinksProyecto(data.info);
     cargarSelector();
 
     const planoURL = obtenerPlanoDesdeURL();
@@ -29,6 +31,7 @@ fetch("data/datos.json")
         mostrarPlano(PLANOS[index]);
       }
     }
+
   });
 
 
@@ -123,4 +126,73 @@ if (!rol) {
   window.location.href = "index.html";
 }
 
+function configurarLinksProyecto(info) {
 
+  const bloque = document.getElementById("bloqueLinksProyecto");
+  const btnBIM = document.getElementById("btnBIMPlanos");
+  const btnCantidades = document.getElementById("btnCantidadesPlanos");
+
+  if (!info) return;
+
+  // Mostrar bloque
+  bloque.style.display = "block";
+
+  // BIM
+  if (info.bim && btnBIM) {
+    btnBIM.href = info.bim;
+  }
+
+  // Informe cantidades
+  if (info.cantidades && btnCantidades) {
+
+    const archivo = `info/${info.cantidades}.pdf`;
+
+    btnCantidades.onclick = () => {
+      abrirVisorCantidades(archivo);
+    };
+
+  }
+
+}
+
+async function abrirVisorCantidades(pdf) {
+
+  const visor = document.getElementById("visorCantidades");
+  const container = document.getElementById("pdfCantidadesContainer");
+
+  container.innerHTML = "";
+
+  visor.style.display = "flex";
+
+  const loadingTask = pdfjsLib.getDocument(pdf);
+  const pdfDoc = await loadingTask.promise;
+
+  for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+
+    const page = await pdfDoc.getPage(pageNum);
+
+    const viewport = page.getViewport({ scale: 1.5 });
+
+    const canvas = document.createElement("canvas");
+    canvas.className = "pdf-page";
+
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+
+    container.appendChild(canvas);
+
+    await page.render({
+      canvasContext: ctx,
+      viewport
+    }).promise;
+  }
+}
+
+function cerrarVisorCantidades() {
+
+  document.getElementById("visorCantidades").style.display = "none";
+
+  document.getElementById("pdfCantidadesContainer").innerHTML = "";
+}
