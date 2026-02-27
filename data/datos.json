@@ -1,6 +1,6 @@
 {
   "info": {
-    "proyecto": "AE-0463-EDIFICIO OFICINAS-CANTIDADES",
+    "proyecto": "AE-0463-EDIFICIO OFICINAS",
     "bim": "https://acc.autodesk.eu/docs/files/projects/6cb70048-7a2f-4420-8a2a-c6e0177b40f9?folderUrn=urn%3Aadsk.wipemea%3Afs.folder%3Aco.x2Ja1ltGSmCRYUaFnslmHw&entityId=urn%3Aadsk.wipemea%3Adm.lineage%3A2_e9HEhwTeC9W0M2SStAWg&viewModel=detail&moduleId=folders&viewableGuid=c4315ec3-c31e-1476-b281-bd5e22204769.",
     "telefono": "3157106081",
     "correo": "marcelopaez@aycardiestructural.com",
@@ -121,18 +121,7 @@
   ],
   "pilotes": [
     {
-      "id": "ID PILOTE",
-      "seccion": "Sección",
-      "cantidad": null,
-      "prof": null,
-      "longitud": null,
-      "plano": "Plano",
-      "resistencia": null,
-      "volumen": null,
-      "peso": null
-    },
-    {
-      "id": "1",
+      "id": "Tipo 1",
       "seccion": "Ø 0.8 m",
       "cantidad": 8,
       "prof": 23,
@@ -143,7 +132,7 @@
       "peso": 3840.6
     },
     {
-      "id": "2",
+      "id": "Tipo 2",
       "seccion": "Ø 1.0 m",
       "cantidad": 2,
       "prof": 23,
@@ -154,7 +143,7 @@
       "peso": 1549.9
     },
     {
-      "id": "3",
+      "id": "Tipo 3",
       "seccion": "Ø 1.0 m",
       "cantidad": 12,
       "prof": 23,
@@ -165,7 +154,7 @@
       "peso": 9376.2
     },
     {
-      "id": "4",
+      "id": "Tipo 4",
       "seccion": "Ø 0.8 m",
       "cantidad": 11,
       "prof": 23,
@@ -176,7 +165,7 @@
       "peso": 6357.725
     },
     {
-      "id": "5",
+      "id": "Tipo 5",
       "seccion": "Ø 0.9 m",
       "cantidad": 6,
       "prof": 23,
@@ -187,7 +176,7 @@
       "peso": 4504.8
     },
     {
-      "id": "6",
+      "id": "Tipo 6",
       "seccion": "Ø 0.9 m",
       "cantidad": 8,
       "prof": 23,
@@ -1625,7 +1614,7 @@
       "altura": 14.4,
       "plano": "EAN-0519-AES-01-EST-CIM-PL-503-02.01",
       "cantidad": 1,
-      "resistencia": null,
+      "resistencia": 28,
       "volumen": 74.88,
       "peso": 11839.77
     },
@@ -1636,7 +1625,7 @@
       "altura": 9.7,
       "plano": "EAN-0519-AES-01-EST-CIM-PL-503-02.01",
       "cantidad": 1,
-      "resistencia": null,
+      "resistencia": 28,
       "volumen": 209.6,
       "peso": 27287.94
     }
