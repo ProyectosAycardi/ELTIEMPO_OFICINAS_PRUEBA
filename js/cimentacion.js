@@ -14,7 +14,7 @@ const CAMPOS = {
   id: "ID Pilote",
   seccion: "Sección",
   cantidad: "Cantidad",
-  profundidad: "Profundidad (m)",
+  prof: "Profundidad (m)",
   longitud: "Longitud (m)",
   plano: "Plano",
   resistencia: "Resistencia (MPa)",
@@ -177,19 +177,25 @@ selectElemento.addEventListener("change", e => {
 
 function cargarLista() {
 
-  // ===== LIMPIAR SELECT =====
+  // OCULTAR selector para losas cimentación
+  if (tipo === "losas") {
+    selectElemento.style.display = "none";
+    return;
+  }
+
+  // Mostrar selector en otros casos
+  selectElemento.style.display = "block";
+
   selectElemento.innerHTML =
     `<option value="">Seleccione un ${tipo.slice(0, -1)}</option>`;
 
-  // ===== AGREGAR TODOS (pilotes y contencion) =====
-    if (tipo === "pilotes" || tipo === "contencion") {
+  if (tipo === "pilotes" || tipo === "contencion") {
     selectElemento.innerHTML +=
-        `<option value="TODOS">Todos</option>`;
-    }
+      `<option value="TODOS">Todos</option>`;
+  }
 
-  // ===== AGREGAR ELEMENTOS =====
   elementos.forEach((el, i) => {
-    const nombre = el.id;
+    const nombre = el.id || "";
     const piso = el.piso ? ` (${el.piso})` : "";
 
     const opt = document.createElement("option");
@@ -272,7 +278,7 @@ function seleccionarElemento(el) {
 
       <div class="fila">
         <span class="label">Profundidad</span>
-        <span class="valor">${el.profundidad} m</span>
+        <span class="valor">${el.prof} m</span>
       </div>
 
       <div class="fila">
@@ -293,13 +299,18 @@ function seleccionarElemento(el) {
       </div>
 
       <div class="fila">
-        <span class="label">Volumen total del elemento (m³)</span>
-        <span class="valor">${el.volumen} m³</span>
+        <span class="label" id="labelVolumenPiso">Volumen (m³)</span>
+        <span class="valor" id="kpiVolumen">—</span>
       </div>
 
       <div class="fila">
-        <span class="label">Peso total de refuerzo del elemento (kg)</span>
-        <span class="valor">${el.peso} kg</span>
+        <span class="label">Acero total (kg)</span>
+        <span class="valor" id="kpiPeso">—</span>
+      </div>
+
+      <div class="fila">
+        <span class="label">Cuantía promedio (kg/m³)</span>
+        <span class="valor" id="kpiCuantia">—</span>
       </div>
 
     </div>
@@ -312,6 +323,8 @@ function seleccionarElemento(el) {
 
     // Mostrar comparativo)
     mostrarComparativo(el, "TOTAL");
+
+    actualizarKPIs([el], "TOTAL");
 
     renderGrafica();
     return;
@@ -510,24 +523,19 @@ function actualizarKPIs(registrosElemento, pisoSeleccionado) {
 
   if (labelVol) {
 
-    if (tipo === "vigas") {
+    if (tipo === "pilotes" || tipo === "contencion") {
 
-      // En vigas siempre fijo
-      labelVol.textContent = "Volumen (m³)";
+      const el = registrosElemento[0];
 
-    } else {
+      const cantidad = el?.cantidad || registrosElemento.length;
 
-      if (pisoSeleccionado === "TOTAL") {
-        labelVol.textContent = "Volumen todos los pisos (m³)";
-      } else {
+      const nombreTipo =
+        tipo === "pilotes"
+          ? (cantidad === 1 ? "pilote" : "pilotes")
+          : (cantidad === 1 ? "muro de contención" : "muros de contención");
 
-        if (pisoSeleccionado.toLowerCase().includes("piso")) {
-          labelVol.textContent = `Volumen ${pisoSeleccionado} (m³)`;
-        } else {
-          labelVol.textContent = `Volumen Piso ${pisoSeleccionado} (m³)`;
-        }
-
-      }
+      labelVol.textContent =
+        `Volumen total de ${cantidad} ${nombreTipo} Tipo ${el.id} (m³)`;
 
     }
   }
@@ -579,6 +587,23 @@ function actualizarKPIs(registrosElemento, pisoSeleccionado) {
 
   document.getElementById("kpiVolumen").textContent =
     volumenPiso > 0 ? volumenPiso.toFixed(2) + " m³" : "—";
+
+  const labelPeso = document.querySelector("#kpiPeso")?.parentElement?.querySelector(".label");
+
+  if (labelPeso && (tipo === "pilotes" || tipo === "contencion")) {
+
+    const el = registrosElemento[0];
+
+    const cantidad = el?.cantidad || registrosElemento.length;
+
+    const nombreTipo =
+      tipo === "pilotes"
+        ? (cantidad === 1 ? "pilote" : "pilotes")
+        : (cantidad === 1 ? "muro de contención" : "muros de contención");
+
+    labelPeso.textContent =
+      `Peso total de refuerzo de ${cantidad} ${nombreTipo} Tipo ${el.id} (kg)`;
+  }
 
   document.getElementById("kpiPeso").textContent =
     acero > 0 ? acero.toFixed(1) + " kg" : "—";
@@ -906,48 +931,69 @@ function mostrarComparativoEntrepiso(pisoSeleccionado) {
     return;
   }
 
+  const volumenTotal = capVigas.volumen + capLosas.volumen;
+  const pesoTotal = capVigas.peso + capLosas.peso;
+  const areaTotal = capVigas.area + capLosas.area;
+
+  const cuantiaVolTotal = pesoTotal / volumenTotal;
+  const cuantiaAreaTotal = pesoTotal / areaTotal;
+  const consumoTotal = volumenTotal / areaTotal;
+
   const bloque = document.getElementById("bloqueComparativo");
   if (!bloque) return;
 
   bloque.innerHTML = `
     <div class="card-detalle" style="margin-top:20px">
-      <h4>Comparación Entrepiso – ${titulo}</h4>
-
+      <h4>Comparación estructural completa – ${titulo}</h4>
       <table style="width:100%; border-collapse: collapse; text-align:center;">
-        <thead>
-          <tr>
-            <th style="text-align:left;">Concepto</th>
-            <th>Vigas</th>
-            <th>Losa</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="text-align:left;">Volumen (m³)</td>
-            <td>${capVigas.volumen.toFixed(2)}</td>
-            <td>${capLosas.volumen.toFixed(2)}</td>
-          </tr>
-          <tr>
-            <td style="text-align:left;">Peso refuerzo (kg)</td>
-            <td>${capVigas.peso.toFixed(1)}</td>
-            <td>${capLosas.peso.toFixed(1)}</td>
-          </tr>
-          <tr>
-            <td style="text-align:left;">Cuantía (kg/m³)</td>
-            <td>${capVigas.cuantiaVol.toFixed(0)}</td>
-            <td>${capLosas.cuantiaVol.toFixed(0)}</td>
-          </tr>
-          <tr>
-            <td style="text-align:left;">Cuantía (kg/m²)</td>
-            <td>${capVigas.cuantiaArea.toFixed(1)}</td>
-            <td>${capLosas.cuantiaArea.toFixed(1)}</td>
-          </tr>
-          <tr>
-            <td style="text-align:left;">Consumo (m³/m²)</td>
-            <td>${capVigas.consumo.toFixed(3)}</td>
-            <td>${capLosas.consumo.toFixed(3)}</td>
-          </tr>
-        </tbody>
+
+      <thead>
+        <tr>
+          <th style="text-align:left;">Concepto</th>
+          <th>Vigas y viguetas</th>
+          <th>Losa</th>
+          <th>Total losa de cimentación</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+      <tr>
+        <td style="text-align:left;">Volumen total (m³)</td>
+        <td>${capVigas.volumen.toFixed(2)}</td>
+        <td>${capLosas.volumen.toFixed(2)}</td>
+        <td><b>${volumenTotal.toFixed(2)}</b></td>
+      </tr>
+
+      <tr>
+        <td style="text-align:left;">Peso total de acero (kg)</td>
+        <td>${capVigas.peso.toFixed(0)}</td>
+        <td>${capLosas.peso.toFixed(0)}</td>
+        <td><b>${pesoTotal.toFixed(0)}</b></td>
+      </tr>
+
+      <tr>
+        <td style="text-align:left;">Cuantía volumétrica (kg/m³)</td>
+        <td>${capVigas.cuantiaVol.toFixed(1)}</td>
+        <td>${capLosas.cuantiaVol.toFixed(1)}</td>
+        <td><b>${cuantiaVolTotal.toFixed(1)}</b></td>
+      </tr>
+
+      <tr>
+        <td style="text-align:left;">Cuantía por área (kg/m²)</td>
+        <td>${capVigas.cuantiaArea.toFixed(1)}</td>
+        <td>${capLosas.cuantiaArea.toFixed(1)}</td>
+        <td><b>${cuantiaAreaTotal.toFixed(1)}</b></td>
+      </tr>
+
+      <tr>
+        <td style="text-align:left;">Consumo de concreto (m³/m²)</td>
+        <td>${capVigas.consumo.toFixed(3)}</td>
+        <td>${capLosas.consumo.toFixed(3)}</td>
+        <td><b>${consumoTotal.toFixed(3)}</b></td>
+      </tr>
+
+      </tbody>
       </table>
     </div>
   `;
