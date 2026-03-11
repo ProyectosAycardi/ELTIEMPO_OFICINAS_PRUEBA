@@ -984,7 +984,7 @@
   "vigas": [
     {
       "id": "101",
-      "piso": "Cimentacion",
+      "piso": "Cimentación",
       "seccion": "60x60",
       "plano": "1206-EST-2016-PD-ADM-P2-D1",
       "cantidad": 1,
@@ -994,7 +994,7 @@
     },
     {
       "id": "102",
-      "piso": "Cimentacion",
+      "piso": "Cimentación",
       "seccion": "60x60;80x60;50x60;75x60",
       "plano": "1206-EST-2016-PD-ADM-P2-D1",
       "cantidad": 1,
@@ -1014,7 +1014,7 @@
     },
     {
       "id": "104",
-      "piso": "Cimentacion",
+      "piso": "Cimentación",
       "seccion": "30x60",
       "plano": "1206-EST-2016-PD-ADM-P2-D1",
       "cantidad": 2,
@@ -1733,6 +1733,7 @@
     }
   ]
 }
+
 
 
 
