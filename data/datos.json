@@ -1710,6 +1710,26 @@
       "resistencia": "4200"
     }
   ],
+  "observaciones":[
+    {
+      "categoria":"Cimentacion",
+      "elemento":"Pilotes P4-P7",
+      "descripcion":"Revisar interferencia con drenaje existente",
+      "nivel":"Alta"
+    },
+    {
+      "categoria":"Cimentacion",
+      "elemento":"Pilotes P9-P11",
+      "descripcion":"Revisar interferencia",
+      "nivel":"Baja"
+    },
+    {
+      "categoria":"Piso 7",
+      "elemento":"Zona achurada plano N07",
+      "descripcion":"Cambio de altura de losa",
+      "nivel":"Media"
+    }
+  ],
   "recomendaciones": [
     {
       "documento": "Documento",

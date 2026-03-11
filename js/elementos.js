@@ -693,7 +693,7 @@ function renderGraficaResistenciaPorPiso(vigas) {
   });
 
   // 3. Ordenar pisos
-  const pisos = [...new Set(datos.map(d => d.piso))]
+  const pisos = Object.keys(porPiso)
     .sort((a, b) => obtenerOrdenPiso(a) - obtenerOrdenPiso(b));
 
 
